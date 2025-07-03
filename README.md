@@ -73,7 +73,7 @@ The pipeline first tries to find an existing course (`find_courses` action). If 
 | Agent (dir)                        | ADK Action ID | Endpoint            | Purpose |
 |------------------------------------|---------------|---------------------|---------|
 | `agents/course_finder_adk`         | `find_courses`| POST `/find-courses`| Return up to *k* existing course names matching user intent |
-| 〃 (same server)                   | `compose_course` | POST `/compose-course` | Compose a brand-new pose sequence if no existing course passes validation |
+| `agents/course_recommender_adk`         | `compose_course` | POST `/compose-course` | Compose a brand-new pose sequence if no existing course passes validation |
 
 Agents are specified **only** by their `card.yaml`; the runner never hardcodes paths or schemas.
 
