@@ -176,10 +176,6 @@ Here's a breakdown of the files and directories in this project:
     *   **`agents/course_finder_adk/`** – FastAPI server & card for **find_courses**.
     *   **`agents/category_recommender_adk/`** – FastAPI server & card for **compose_course**.
     *   **Purpose**: Top-level directory for all agent-specific modules.
-
-        
-
-        
 *   **`services/`**:
     *   **Purpose**: Top-level directory for all shared service modules.
     *   **`services/pose_checker/`**:
