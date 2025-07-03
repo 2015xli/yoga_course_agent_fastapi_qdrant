@@ -1,0 +1,82 @@
+I am trying to develop a yoga coach assistant app that can respond with a sequence of yoga to question like "I am tired, and please suggest a 20min yoga sequence."  I have built a graph RAG for yoga knowledge. It has two parts: one is a knowledge graph built with neo4j that store the nodes and relationships between poses, courses, and attributes, etc. 
+
+1. The pose node has following relationships to other poses:
+
+- BUILD_UP: Suggests preparatory poses that can be practiced before current pose, for warm up or preparation.
+- MOVE_FORWARD: Gives poses of progression from current pose for deepen practice if the trainees can finish current pose successfully.
+- BALANCE_OUT: Counterpose to balance effects of current pose. It is important to practice the balance_out pose for the trainees who may have challenge when practicing current pose.
+- UNWIND: Easier/more relaxing next poses.
+
+2. The pose node has following properties:
+    - "introduction", gives pose introduction;
+    - "steps", explains practice steps in details;
+    - "modification", explains pose variations for different situations;
+    - "caution", explains contraindications for certain conditions;
+    - "effects", physical/mental benefits of the pose;
+    - "practice_note", gives body positioning suggestions;
+    - "how_to_come_out": for the document that explains how to balance and relax after practcing current pose. It is an explanation of UNWIND and BALANCE_OUT contents.
+
+3. Pose node has relationships to other kinds of nodes:
+- HAS_ATTRIBUTE: to Attribute node that has id of Yin (quiet practice, suitable for body stretch and relaxation), Yang (active practice, suitable for body strength and energy), Balance (neutral between quiet and active), Mind (mental practice), etc.
+- HAS_CHALLEMGE: to Challenge node that has id from 1 to 3 with 1 for easiest and 3 for hardest.
+- IN_CATEGORY: to Category node that has id of a category name. Poses in same category are broadly similar but may have different challenge levels and have different postures. They may be substituted between each other in a training course sequence to fit the trainees needs.
+
+4. Course node uses INCLUDES_POSE relationships to pose nodes. INCLUDES_POSE has following properties:
+- order: starting from 1, which referring to the sequence order of the pointed pose in the course. A course node can use the order property of INCLUDES_POSE relationships to reconstruct the course sequence. 
+- duration_seconds: rough time duration in seconds when practice this pose. Time duration in practice is not strict. 
+- repeat_times: how many times this pose should be repeated.
+The Course node has total_duration property in hh:mm:ss format, which is the total time of the course practice.
+
+The graph RAG also has three ChromaDB vector store collections for semantic search of pose descriptions and course content.
+
+1. One collection is yoga_pose that has documents that have metadata of "name" and "field" with following values:
+    - "name": pose name, "field": "introduction", for the document that gives pose introduction;
+    - "name": pose name, "field": "steps", for the document that explains practice steps in details;
+    - "name": pose name, "field": "modification", for the document that explains pose variations for different situations;
+    - "name": pose name, "field": "caution", for the document that explains contraindications for certain conditions;
+    - "name": pose name, "field": "effects", for the document that explains physical/mental benefits of the pose;
+    - "name": pose name, "field": "practice_note", for the document that gives body positioning suggestions;
+    - "name": pose name, "field": "how_to_come_out": for the document that explains how to balance and relax after practcing current pose. It is an explanation of UNWIND and BALANCE_OUT contents. 
+
+2. Another ChromaDB collection is yoga_course for course information, which has documents that have following metadata:
+    - "Course: course name, "challenge": challenge level of the course, "duration": total duration in yy:mm:ss, "description": the course description.
+
+3. The third ChromaDB collection is yoga_category for yoga pose category introduction, which has documents that have following metadata:
+    - "Category: category name.
+    
+
+    
+The knowledge graph with neo4j and the vector store with ChromaDB are built from same original data, so their contents are consistent.  
+  
+In order to use the graph RAG to accomplish my goal (to respond with a yoga sequence recommendation to user's query). I am considering to use the following approach:
+
+Step 1. Use openAI API to extract the key information of user query in the following format: 
+    {
+      "overarching objective": ["..."],
+      "physical body parts to train": ["..."],
+      "contraindications": ["..."],
+      "poses to avoid": ["..."],
+      "minimum duration in seconds": "...",
+      "maximum duration in seconds": "..."
+    }
+    The prompt for this LLM call is provided by a file "prompt_to_extract_user_query.txt", where user query is referenced as {query}. 
+      
+Step 2. Use the key info of user query to semantically search yoga_course collection to identify initial matching courses.
+    2.1. Use the key info of user query "overarching objective" to semantically search yoga_course collection to identify K matching courses.
+    2.2. Use the key info of user query "physical body parts to train" to semantically search yoga_course collection to identify K matching courses.
+    2.3. Put together all the identified candidate matching course names and ensure uniqueness.
+
+Step 3. Use openAI API to identify the courses that indeed meet user's training objectives.
+    3.1. For every candidate course, get the course node in neo4j graph, and get its "description" property.
+    3.2. Ask OpenAI if the course description matches the user's query, the prompt to the LLM call is something like: "Please answer if the Yoga course matches the user's training query. The course description is: {description}; The user's training query is: {query}. If matching, answer yes; not matching, answer no; if you are not sure, answer n/a. Only give one of the three answers, nothing else. Your answer:".
+    3.3. Keep the courses that have 'yes' answer. If no course has 'yes' answer, keep those with "n/a" answer. 
+
+Step 4. For each of the matching candidate courses, retrieve the pose sequence from the neo4j knowledge graph.
+   For each of the pose in the pose sequence, 
+   4.1. get its "introduction" property value, and ask openAI API to check if any of "poses to avoid" fall in the pose introduction. If yes, mark the pose as unsuitable.
+   4.2. get its "caution" property value and ask openAI API to check if any of "contraindications" fall in the caution description. If yes, mark the pose as unsuitable. (If "caution" value is empty, just skip this step.)
+   4.3. get its "introduction" and "steps" property values and ask openAI API to check if any of "physical body parts to train" fall in the values description. If yes, mark the pose as suitable.
+
+5. Go through the pose sequence of a candidate course.
+   5.1. If a pose is marked unsuitable, then remove poses in the course that are not aligned with the user's query very well; and/or replace with poses that are and/or add poses to meet the user's specific requirement.
+Option 2.  

@@ -1,0 +1,26 @@
+id: categoryrecommender-agent
+name: Category Recommender Agent
+version: 0.1.0
+owner: yoga-team
+license: MIT
+description: "Composes a new yoga pose sequence by analyzing user objectives and selecting relevant categories."
+actions:
+  - id: compose_course
+    name: Compose Course
+    description: "Generate a pose sequence that meets the user query goals."
+    http:
+      method: POST
+      endpoint: /compose-course
+      input_schema:
+        type: object
+        properties:
+          user_query:
+            type: string
+        required: [user_query]
+      output_schema:
+        type: object
+        properties:
+          sequence:
+            type: array
+            items:
+              type: string

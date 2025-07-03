@@ -1,0 +1,7 @@
+qdrant-client[local]>=1.9.0
+sentence_transformers>=2.6.1
+neo4j>=5.17.0
+fastapi>=0.111.0
+uvicorn>=0.30.0
+openai>=1.30.0
+requests>=2.32.3

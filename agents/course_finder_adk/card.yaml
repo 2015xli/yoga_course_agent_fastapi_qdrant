@@ -1,0 +1,26 @@
+id: coursefinder-agent
+name: Course Finder Agent
+version: 0.1.0
+owner: yoga-team
+license: MIT
+description: "Retrieves existing yoga courses matching a user query using semantic search over the embedded Qdrant store."
+actions:
+  - id: find_courses
+    name: Find Courses
+    description: "Return a ranked list of course names that satisfy the user query."
+    http:
+      method: POST
+      endpoint: /find-courses
+      input_schema: 
+        type: object
+        properties:
+          user_query:
+            type: string
+        required: [user_query]
+      output_schema:
+        type: object
+        properties:
+          courses:
+            type: array
+            items:
+              type: string

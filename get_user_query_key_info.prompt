@@ -1,0 +1,33 @@
+This is user's query to a Yoga coach. Please give your response based on his query. 
+
+1. User Query:
+
+{query}
+
+2. Instructions for Understanding the Query:
+- Identify the overarching goals or desired outcomes of the user. (e.g., mind relaxation, body strength, muscle improvement), no more than 2 items. Don't give general answer like "recovery", "relaxation", etc.
+- Identify the specific physical contraindications based on the user’s query, no more than 3 items. Don't answer with poses or cautions here (like "no upside-down", "hip stretch restriction").
+- Identify the specific physical body parts the user explicitly wants to improve, no more than 3 items.
+- Identify the specific yoga poses the user cannot practice, no more than 3 items. Only answer with poses, not cautions.
+- Identify the specific time duration in seconds, minimum and maximum.
+
+3. Response Format:
+
+Use the following json format to response, _nothing_ else, but the following. 
+
+{{
+  "objective": ["..."],
+  "contraindications": ["..."],
+  "physical body parts to train": ["..."],
+  "poses to avoid": ["..."],
+  "minimum duration": "...",
+  "maximum duration": "..."
+}}
+
+4. Rules for Query Understanding:
+
+- Provide only specific answers strictly based on the user’s query. Do not infer or guess beyond what is explicitly queried.
+- Do not include any body parts related to "contraindications" in the list of "body parts to improve", since body parts related to contraindications should usually avoid training for improvement, unless the user query explicitly requires to improve that body parts.
+- If an answer cannot be extracted for a question, leave it blank; Never fill with your guesses.
+- Ensure all the answers in the lists must be semantically distinct. Never give duplicate answers across all the fields. For example, don't use "inversion" in one field and "upside-down" in another. Another example is, never have both "breath" and "inhale/exhale" appearing in your answers. 
+- Review your response carefully to ensure all rules are followed before submitting.
