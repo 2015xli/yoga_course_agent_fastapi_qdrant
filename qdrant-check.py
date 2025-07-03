@@ -5,13 +5,9 @@ Checks that the embedded Qdrant database contains non-empty
 vectors can be queried and retrieved with payloads.
 """
 
-from services.vector_store import get_client, embed
-from services.vector_store import QDRANT_PERSIST_DIR
+from services.vector_store import get_client, embed, shutdown_server
 import pathlib, os
-print("Path seen right now:", pathlib.Path(QDRANT_PERSIST_DIR).resolve())
-print("Contains files   :", os.listdir(QDRANT_PERSIST_DIR))
 
-#COLLECTIONS = ["yoga_pose", "yoga_course", "yoga_category"]
 COLLECTIONS = ["yoga_course", "yoga_category", "yoga_pose"]
 
 def main() -> None:
@@ -38,6 +34,7 @@ def main() -> None:
             print(" • id:", p.id, "| payload:", p.payload)
 
     qc.close()
+    shutdown_server()
 
 if __name__ == "__main__":
     main()

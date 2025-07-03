@@ -4,13 +4,14 @@ import argparse
 from openai import OpenAI
 from neo4j import GraphDatabase
 from services.vector_store import get_client, embed
+from pathlib import Path
 
 # Configuration - Load from environment variables
 NEO4J_URI = os.getenv("NEO4J_URI", "bolt://localhost:7687")
 NEO4J_USER = os.getenv("NEO4J_USER", "neo4j")
 NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "12345678")
 # Qdrant persistence handled by services.vector_store
-PROMPT_FILE_PATH = "/home/xli/NAS/home/bin/yoga-info-processing/get_user_query_key_info.prompt"
+PROMPT_FILE_PATH = Path(__file__).resolve().parent / "get_user_query_key_info.prompt"
 
 class CategoryCourseRecommender:
     """

@@ -1,2 +1,6 @@
 storage:
-  data_path: /home/xli/NAS/home/bin/yoga-course-recommendation/qdrant_db
+  storage_path: /home/xli/NAS/home/bin/yoga_course_agent_fastapi_qdrant/qdrant_db
+
+service:
+  host: 0.0.0.0
+  http_port: 6333

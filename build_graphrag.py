@@ -1,11 +1,8 @@
 import os, json
-try:
-    from qdrant_client.local.qdrant_local import QdrantLocal
-except ImportError:
-    from qdrant_client import QdrantLocal
+from pathlib import Path
 import logging
 from neo4j import GraphDatabase
-from services.vector_store import get_client, embed, recreate_collection, str2uuid, QDRANT_PERSIST_DIR
+from services.vector_store import get_client, embed, recreate_collection, str2uuid, shutdown_server
 import shutil
 from qdrant_client import models
 
@@ -13,7 +10,8 @@ from qdrant_client import models
 NEO4J_URI = os.getenv("NEO4J_URI", "bolt://localhost:7687")
 NEO4J_USER = os.getenv("NEO4J_USER", "neo4j")
 NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "12345678")
-INPUT_DATA_DIR = "/home/xli/NAS/home/bin/yoga-course-recommendation"
+#INPUT_DATA_DIR = "/home/xli/NAS/home/bin/yoga_course_agent_fastapi_qdrant/data"
+INPUT_DATA_DIR = Path(__file__).resolve().parent / "data"
 # Qdrant persistence handled by services.vector_store
 POSE_JSON = f"{INPUT_DATA_DIR}/array_pose.json"
 ATTRIBUTE_JSON = f"{INPUT_DATA_DIR}/array_attribute.json"
@@ -238,10 +236,6 @@ def add_documents_to_qdrant(client, collection_name: str, ids: list[str], texts:
 
 if __name__ == "__main__":
     # Build/refresh vector collections in embedded Qdrant
-    # Clean previous embedded Qdrant database (start fresh each build)
-    if os.path.isdir(QDRANT_PERSIST_DIR):
-        shutil.rmtree(QDRANT_PERSIST_DIR)
-        print(f"🧹 Removed old Qdrant DB directory: {QDRANT_PERSIST_DIR}")
     qclient = get_client()
 
     # ---- Build pose collection (optional for current features) ----
@@ -295,6 +289,7 @@ if __name__ == "__main__":
 
     # Close the embedded Qdrant client to release the file lock before exiting.
     qclient.close()
+    shutdown_server()
 
     # ---- Build Knowledge Graph ----
     driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))

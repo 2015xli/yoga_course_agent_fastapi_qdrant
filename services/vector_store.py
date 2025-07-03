@@ -38,12 +38,11 @@ from sentence_transformers import SentenceTransformer
 # Configuration
 # ---------------------------------------------------------------------------
 from pathlib import Path
-# Ensure all processes share the same on-disk DB irrespective of CWD.
-_PROJECT_ROOT = Path(__file__).resolve().parent.parent
-QDRANT_PERSIST_DIR = os.getenv(
-    "QDRANT_PERSIST_DIR", str(_PROJECT_ROOT / "qdrant_db")
-)
 _QDRANT_URL = os.getenv("QDRANT_URL", "http://127.0.0.1:6333")
+_QDRANT_CONFIG = str((Path(__file__).resolve().parent.parent / "qdrant.yaml"))
+# Helpful diagnostics – printed once at import time.
+print("[vector_store] QDRANT_URL:", _QDRANT_URL)
+print("[vector_store] QDRANT_CONFIG:", _QDRANT_CONFIG)
 # We use the widely-available MiniLM model. (384-dimensional embeddings.)
 _EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
 _EMBEDDING_DIM = 1536
@@ -65,6 +64,47 @@ from functools import lru_cache
 
 _server_proc: subprocess.Popen | None = None
 
+def shutdown_server(timeout: float = 10.0) -> None:
+    """Terminate the Qdrant server started by this module (if any).
+
+    If the server was not spawned by :func:`get_client` in the current Python
+    interpreter (i.e. ``_server_proc`` is *None*), this is a no-op so that the
+    caller can safely invoke it regardless of who owns the server.
+
+    Parameters
+    ----------
+    timeout:
+        Seconds to wait for the server process to exit after sending
+        ``SIGTERM``.  If the process is still alive after the timeout it is
+        force-killed with ``SIGKILL``.
+    """
+    global _server_proc
+
+    if _server_proc is None:
+        return  # nothing we own is running
+
+    if _server_proc.poll() is not None:
+        # Process already exited – clear handle so that a new server can be
+        # started later if needed.
+        _server_proc = None
+        return
+
+    # Ask the server to terminate gracefully first.
+    _server_proc.terminate()
+    try:
+        _server_proc.wait(timeout=timeout)
+    except subprocess.TimeoutExpired:
+        # Escalate if it refuses to die.
+        _server_proc.kill()
+        _server_proc.wait()
+    finally:
+        _server_proc = None  # Allow a fresh server to spawn next time.
+        # Clear cached client so that a new one is created if requested later.
+        try:
+            get_client.cache_clear()
+        except Exception:
+            pass
+
 
 def _start_local_server() -> None:
     """Spawn a standalone Qdrant server (if not already running)."""
@@ -72,12 +112,10 @@ def _start_local_server() -> None:
     if _server_proc and _server_proc.poll() is None:
         return  # already running
 
-    os.makedirs(QDRANT_PERSIST_DIR, exist_ok=True)
-
     cmd = [
         "qdrant",
         "--config-path",
-        "qdrant.yaml",
+        _QDRANT_CONFIG 
     ]
     _server_proc = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
 
@@ -85,7 +123,8 @@ def _start_local_server() -> None:
     atexit.register(lambda: _server_proc.terminate() if _server_proc and _server_proc.poll() is None else None)
 
     # Wait until server responds
-    max_attempts = 120  # ~60 seconds
+    # Give the server up to ~60 s to come online (120 × 0.5 s).
+    max_attempts = 120
     for attempt in range(max_attempts):
         try:
             QdrantClient(url=_QDRANT_URL, timeout=60).get_collections()
@@ -143,7 +182,7 @@ def str2uuid(value: str) -> str:
     return str(uuid.uuid5(uuid.NAMESPACE_URL, value))
 
 __all__ = [
-    "QDRANT_PERSIST_DIR",
+    "shutdown_server",
     "embed",
     "get_client",
     "recreate_collection",

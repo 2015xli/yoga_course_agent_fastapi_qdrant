@@ -1,12 +1,12 @@
 import argparse
 import logging
 import subprocess
-import time
 import requests
 import re
 import glob
 import yaml
 from pathlib import Path
+from services.vector_store import shutdown_server
 
 # For Neo4j detail retrieval reuse logic from existing agent
 from yoga_models import PoseInSequence, CourseCandidate
@@ -221,6 +221,7 @@ class YogaApplicationRunner:
     def close(self):
         if self.neo4j_driver:
             self.neo4j_driver.close()
+        shutdown_server()
 
 def main():
     parser = argparse.ArgumentParser(description="Yoga Application Runner")
