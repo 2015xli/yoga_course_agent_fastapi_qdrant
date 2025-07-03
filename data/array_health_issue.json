@@ -1,0 +1,262 @@
+{
+  "health_issue": [
+    {
+      "name": "high blood pressure",
+      "description": "Cardiovascular condition requiring avoidance of inversions, intense backbends, and poses increasing heart rate.",
+      "condition": "chronic",
+      "caution": ["Headstand", "Shoulderstand", "Upward Bow", "Drop-Backs", "Kapalabhati Breathing"]
+    },
+    {
+      "name": "detached retina",
+      "description": "Retinal detachment risk aggravated by increased intraocular pressure during inversions.",
+      "condition": "chronic",
+      "caution": ["All Inversions", "Downward Dog", "Handstand"]
+    },
+    {
+      "name": "glaucoma",
+      "description": "Elevated intraocular pressure contraindicated for inverted poses.",
+      "condition": "chronic",
+      "caution": ["Headstand", "Shoulderstand", "Legs-Up-the-Wall"]
+    },
+    {
+      "name": "wrist injuries/pain",
+      "description": "Acute/chronic wrist strain requiring reduced weight-bearing on hands.",
+      "condition": "acute/chronic",
+      "caution": ["Crow Pose", "Side Plank", "Chaturanga"]
+    },
+    {
+      "name": "elbow injuries",
+      "description": "Inflammation or instability in elbow joints.",
+      "condition": "acute/chronic",
+      "caution": ["Arm Balances", "Dolphin Pose", "Reverse Plank"]
+    },
+    {
+      "name": "shoulder injuries",
+      "description": "Rotator cuff/impingement issues requiring modified arm-loading.",
+      "condition": "acute/chronic",
+      "caution": ["Wheel Pose", "Handstand", "Eagle Arms"]
+    },
+    {
+      "name": "neck injuries/conditions",
+      "description": "Cervical spine issues requiring neck-neutral alignment.",
+      "condition": "acute/chronic",
+      "caution": ["Plow Pose", "Fish Pose", "Headstand Variations"]
+    },
+    {
+      "name": "sacroiliac joint dysfunction",
+      "description": "SI joint instability aggravated by asymmetrical poses.",
+      "condition": "acute/chronic",
+      "caution": ["Warrior III", "Reclining Twist", "Pigeon Pose"]
+    },
+    {
+      "name": "hip joint discomfort",
+      "description": "Hip impingement/bursitis requiring modified hip openers.",
+      "condition": "acute/chronic",
+      "caution": ["Lotus Pose", "Fire Log Pose", "Deep Lunges"]
+    },
+    {
+      "name": "knee injuries/pain",
+      "description": "Meniscus/ligament issues requiring knee-neutral alignment.",
+      "condition": "acute/chronic",
+      "caution": ["Hero Pose", "Child’s Pose", "Deep Squats"]
+    },
+    {
+      "name": "ankle ligament laxity/discomfort",
+      "description": "Chronic instability or acute sprains in ankle joints.",
+      "condition": "acute/chronic",
+      "caution": ["Tree Pose", "Warrior I", "Toe Stand"]
+    },
+    {
+      "name": "disc herniation (lumbar/cervical)",
+      "description": "Spinal disc protrusion requiring neutral spine alignment.",
+      "condition": "acute/chronic",
+      "caution": ["Forward Folds", "Twists", "Cobra Pose"]
+    },
+    {
+      "name": "pregnancy (post-35 weeks)",
+      "description": "Late-term pregnancy avoiding supine positions and inversions.",
+      "condition": "temporary",
+      "caution": ["Corpse Pose", "Headstand", "Deep Backbends"]
+    },
+    {
+      "name": "post-natal recovery",
+      "description": "Postpartum abdominal/pelvic floor healing phase.",
+      "condition": "temporary",
+      "caution": ["Boat Pose", "Jump-Throughs", "Kapalabhati"]
+    },
+    {
+      "name": "menstruation",
+      "description": "Traditional avoidance of inverted poses.",
+      "condition": "temporary",
+      "caution": ["Shoulderstand", "Headstand", "Legs-Up-the-Wall"]
+    },
+    {
+      "name": "lower back conditions",
+      "description": "General lumbar spine issues requiring modified flexion/extension.",
+      "condition": "acute/chronic",
+      "caution": ["Seated Forward Fold", "Upward Bow", "Camel Pose"]
+    },
+    {
+      "name": "lower back compression",
+      "description": "Acute spinal compression aggravated by axial loading.",
+      "condition": "acute",
+      "caution": ["Forward Bends", "Twists", "Inversions"]
+    },
+    {
+      "name": "arthritis",
+      "description": "Inflammatory joint disease requiring gentle range-of-motion.",
+      "condition": "chronic",
+      "caution": ["Lotus Pose", "Arm Balances", "Deep Backbends"]
+    },
+    {
+      "name": "limited range of motion",
+      "description": "General mobility restrictions needing prop modifications.",
+      "condition": "chronic",
+      "caution": ["King Pigeon", "Full Wheel", "Bound Angle"]
+    },
+    {
+      "name": "headache",
+      "description": "Acute cephalalgia exacerbated by cervical strain.",
+      "condition": "acute",
+      "caution": ["Headstand", "Shoulderstand", "Neck Rolls"]
+    },
+    {
+      "name": "hiatus hernia",
+      "description": "Diaphragmatic hernia aggravated by abdominal pressure.",
+      "condition": "chronic",
+      "caution": ["Kapalabhati", "Boat Pose", "Inversions"]
+    },
+    {
+      "name": "peptic ulcer",
+      "description": "Gastric inflammation worsened by core compression.",
+      "condition": "chronic",
+      "caution": ["Boat Pose", "Twists", "Breath Retention"]
+    },
+    {
+      "name": "angina",
+      "description": "Cardiac chest pain requiring minimal exertion.",
+      "condition": "chronic",
+      "caution": ["Vinyasa Flow", "Upward Bow", "Inversions"]
+    },
+    {
+      "name": "sacral discomfort",
+      "description": "Localized sacral pain aggravated by seated poses.",
+      "condition": "acute/chronic",
+      "caution": ["Hero Pose", "Seated Forward Fold", "Cow Face Pose"]
+    },
+    {
+      "name": "groin problems",
+      "description": "Adductor strain requiring modified hip openers.",
+      "condition": "acute/chronic",
+      "caution": ["Bound Angle Pose", "Frog Pose", "Wide-Legged Forward Fold"]
+    },
+    {
+      "name": "chronic injury",
+      "description": "Long-term musculoskeletal issues needing sustained modifications.",
+      "condition": "chronic",
+      "caution": ["Power Yoga", "Advanced Arm Balances", "Deep Stretches"]
+    },
+    {
+      "name": "recent injury",
+      "description": "Acute trauma recovery requiring pose avoidance.",
+      "condition": "acute",
+      "caution": ["Weight-Bearing Poses", "Twists", "Dynamic Movements"]
+    },
+    {
+      "name": "heart condition",
+      "description": "Cardiovascular limitations requiring gentle practice.",
+      "condition": "chronic",
+      "caution": ["Fast Transitions", "Breath Retention", "Inversions"]
+    },
+    {
+      "name": "extreme heart condition",
+      "description": "Severe cardiac issues requiring chair-based modifications.",
+      "condition": "chronic",
+      "caution": ["Standing Poses", "Backbends", "Arm Balances"]
+    },
+    {
+      "name": "inner-ear discharge",
+      "description": "Active infection contraindicated for balance poses.",
+      "condition": "acute",
+      "caution": ["Eagle Pose", "Dancer’s Pose", "Inversions"]
+    },
+    {
+      "name": "severe sinus infection",
+      "description": "Acute sinus inflammation worsened by inversions.",
+      "condition": "acute",
+      "caution": ["Downward Dog", "Headstand", "Forward Folds"]
+    },
+    {
+      "name": "vertigo/dizziness",
+      "description": "Vestibular imbalance affecting stability.",
+      "condition": "chronic",
+      "caution": ["Twisting Poses", "Balance Postures", "Rapid Movements"]
+    },
+    {
+      "name": "multiple sclerosis",
+      "description": "Neurological condition requiring stable poses.",
+      "condition": "chronic",
+      "caution": ["Complex Balances", "Heat Exposure", "Fatiguing Sequences"]
+    },
+    {
+      "name": "middle-ear issues",
+      "description": "Vestibular disturbances impacting equilibrium.",
+      "condition": "chronic",
+      "caution": ["Revolved Triangle", "Half Moon", "Warrior III"]
+    },
+    {
+      "name": "anxiety",
+      "description": "Mental health condition needing calming practices.",
+      "condition": "chronic",
+      "caution": ["Crowded Classes", "Hot Yoga", "Competitive Environments"]
+    },
+    {
+      "name": "fainting spells",
+      "description": "Syncope risk requiring slow transitions.",
+      "condition": "chronic",
+      "caution": ["Quick Transitions", "Inversions", "Standing Forward Folds"]
+    },
+    {
+      "name": "recent abdominal surgery",
+      "description": "Post-operative core muscle protection phase.",
+      "condition": "acute",
+      "caution": ["Boat Pose", "Twists", "Backbends"]
+    },
+    {
+      "name": "pelvic imbalance",
+      "description": "Asymmetrical alignment requiring symmetrical poses.",
+      "condition": "chronic",
+      "caution": ["Single-Leg Balances", "Deep Hip Openers", "Side Plank"]
+    },
+    {
+      "name": "organ inflammation",
+      "description": "Active visceral inflammation requiring gentle practice.",
+      "condition": "acute",
+      "caution": ["Deep Twists", "Core Compression", "Inversions"]
+    },
+    {
+      "name": "facet-joint issues",
+      "description": "Spinal joint degeneration contraindicating extension/twists.",
+      "condition": "chronic",
+      "caution": ["Cobra Pose", "Upward Dog", "Seated Twists"]
+    },
+    {
+      "name": "sciatica",
+      "description": "Sciatic nerve irritation aggravated by hip flexion.",
+      "condition": "acute/chronic",
+      "caution": ["Pigeon Pose", "Forward Folds", "Seated Spinal Twist"]
+    },
+    {
+      "name": "inflammatory abdominal conditions",
+      "description": "Active digestive inflammation (e.g., Crohn’s disease).",
+      "condition": "acute/chronic",
+      "caution": ["Deep Twists", "Boat Pose", "Kapalabhati"]
+    },
+    {
+      "name": "osteoporosis",
+      "description": "Bone density loss requiring spinal protection.",
+      "condition": "chronic",
+      "caution": ["Forward Folds", "Spinal Twists", "Jump-Backs"]
+    }
+  ]
+}
