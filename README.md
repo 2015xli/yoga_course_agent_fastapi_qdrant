@@ -73,7 +73,7 @@ The pipeline first tries to find an existing course (`find_courses` action). If 
 | Agent (dir)                        | ADK Action ID | Endpoint            | Purpose |
 |------------------------------------|---------------|---------------------|---------|
 | `agents/course_finder_adk`         | `find_courses`| POST `/find-courses`| Return up to *k* existing course names matching user intent |
-| 〃 (same server)                   | `compose_course` | POST `/compose-course` | Compose a brand-new pose sequence if no existing course passes validation |
+| `agents/category_recommender_adk`  | `compose_course` | POST `/compose-course` | Compose a brand-new pose sequence if no existing course passes validation |
 
 Agents are specified **only** by their `card.yaml`; the runner never hardcodes paths or schemas.
 
@@ -92,14 +92,14 @@ Agents are specified **only** by their `card.yaml`; the runner never hardcodes p
 MIT – see `LICENSE`.
 
 
-## Functionality Overview
+
 
 The system operates through a coordinated set of components:
 
-1.  **Data Ingestion (`build_graphrag.py`)**: Populates Neo4j with yoga pose, attribute, category, challenge, and course data, and builds ChromaDB collections for semantic search.
+1.  **Data Ingestion (`build_graphrag.py`)**: Populates Neo4j with yoga pose, attribute, category, challenge, and course data, and loads vectors into Qdrant for semantic search.
 2.  **Pose Suitability Checking (`services/pose_checker/server.py`)**: A FastAPI service that checks if a specific yoga pose is suitable for a user based on their contraindications and poses to avoid. It can also suggest replacement poses from the knowledge graph.
-3.  **Existing Course Recommendation (`agents/course_finder/agent.py`)**: An agent that searches for pre-defined yoga courses that semantically match a user's query.
-4.  **Dynamic Course Composition (`agents/category_recommender/agent.py`)**: An agent that composes a new yoga pose sequence based on the user's objectives and relevant yoga categories.
+3.  **Existing Course Recommendation (`agents/course_finder_adk`)**: The ADK agent (`find_courses` action) that searches for pre-defined yoga courses via Qdrant + Neo4j.
+4.  **Dynamic Course Composition (`agents/category_recommender_adk`)**: The ADK agent (`compose_course` action) that generates a new pose sequence when no existing course passes validation.
 5.  **Orchestration (`yoga_application_runner.py`)**: The main application runner that orchestrates the entire process. It first attempts to find and validate an existing course. If no suitable existing course is found, it falls back to composing a new course, validating each pose in the sequence for user suitability.
 
 ## Using Instructions
@@ -122,14 +122,14 @@ To set up and run the application, follow these steps:
     pip install neo4j openai chromadb-client uvicorn fastapi requests
     ```
 
-### Building the Knowledge Graph and ChromaDB
+### Building the Knowledge Graph and Qdrant Vector Store
 
 Before running the application, you need to populate the databases:
 
 ```bash
 python build_graphrag.py
 ```
-This script will connect to your Neo4j instance, clear existing data, load data from the `array_*.json` files, and build the ChromaDB collections.
+This script will connect to your Neo4j instance, clear existing data, load data from the `array_*.json` files, and populate the Qdrant collection.
 
 ### Running the Application
 
@@ -145,41 +145,41 @@ python yoga_application_runner.py --query "I need a 30-minute session for back p
 
 The runner will start the pose checker API server in the background, interact with the course finder and category recommender agents, validate the poses, and print the recommended yoga sequence to the console.
 
-## Explanation of Files
+## 📂 Data & Code Highlights
 
 Here's a breakdown of the files and directories in this project:
 
-*   **`array_anatomical.json`**: JSON data file containing anatomical information (likely for pose descriptions).
+*   **`array_anatomical.json`**: Anatomical metadata per pose.
 *   **`array_attribute.json`**: JSON data file listing various yoga attributes.
 *   **`array_category.json`**: JSON data file listing different yoga categories.
-*   **`array_challenge.json`**: JSON data file listing different challenge levels for yoga.
+*   **`array_challenge.json`**: JSON defining challenge levels.
 *   **`array_course.json`**: JSON data file containing definitions of pre-existing yoga courses, including their sequences.
 *   **`array_health_issue.json`**: JSON data file containing health issues (likely for contraindications).
 *   **`array_pose.json`**: JSON data file containing detailed information about individual yoga poses.
 *   **`build_graphrag.py`**:
-    *   **Purpose**: Script responsible for building and populating the Neo4j knowledge graph and ChromaDB vector databases from the `array_*.json` files. It's the initial setup script for the data layer.
+    *   **Purpose**: Script responsible for building and populating the Neo4j knowledge graph and Qdrant vector database from the `array_*.json` files. It's the initial setup script for the data layer.
 *   **`check_yoga_pose.py`**:
     *   **Purpose**: Contains the core logic for checking the suitability of a single yoga pose against user-defined contraindications and a list of poses to avoid. It can also find a replacement pose from the Neo4j graph if the original is unsuitable. This file is imported and used by the `pose_checker` service.
 *   **`get_course_candidates_for_query.py`**:
-    *   **Purpose**: Implements the `CourseFinder` class, which uses LLMs and ChromaDB to semantically search for existing yoga courses that match a user's query. It retrieves course descriptions from Neo4j and filters candidates. This file is imported and used by the `course_finder` agent.
+    *   **Purpose**: Implements the `CourseFinder` class, which uses LLMs and Qdrant to semantically search for existing yoga courses that match a user's query. It retrieves course descriptions from Neo4j and filters candidates. This file is imported and used by the `course_finder` agent.
 *   **`get_user_query_key_info.prompt`**:
     *   **Purpose**: A prompt template used by LLMs to extract structured information (objectives, contraindications, poses to avoid, etc.) from a user's natural language query.
-*   **`prompt_to_write_app.txt`**: (Likely a historical prompt used during development, not part of the application's runtime logic.)
 *   **`recommend_course_from_category.py`**:
     *   **Purpose**: Implements the `CategoryCourseRecommender` class, which uses LLMs and Neo4j to dynamically compose a new yoga pose sequence based on user objectives and related yoga categories. This file is imported and used by the `category_recommender` agent.
-*   **`summary.txt`**: (Likely a historical summary, not part of the application's runtime logic.)
 *   **`yoga_application_runner.py`**:
     *   **Purpose**: The main entry point and orchestrator of the entire application. It starts the `pose_checker` FastAPI server, coordinates with the `course_finder` and `category_recommender` agents, validates pose sequences, and handles fallbacks and retries.
-*   **`chroma_db/`**:
-    *   **Purpose**: Directory containing the persistent data for the ChromaDB vector database.
+*   **`qdrant_db/`**: Auto-created persistence directory for the local Qdrant server.
+    *   **Purpose**: (Auto-generated) data files for the Qdrant vector database.
 *   **`neo4j_db/`**:
     *   **Purpose**: Directory containing configuration and data for the Neo4j database (e.g., `neo4j.dump` for a pre-built database, or `relate.project.json` for project metadata).
-*   **`agents/`**:
+*   **`agents/`**: All ADK agents.
+    *   **`agents/course_finder_adk/`** – FastAPI server & card for **find_courses**.
+    *   **`agents/category_recommender_adk/`** – FastAPI server & card for **compose_course**.
     *   **Purpose**: Top-level directory for all agent-specific modules.
-    *   **`agents/course_finder/`**:
-        *   **`agents/course_finder/agent.py`**: Implements the `CourseFinderAgent` class, which wraps the `get_course_candidates_for_query.py` logic and defines the agent's API (request/response data structures).
-    *   **`agents/category_recommender/`**:
-        *   **`agents/category_recommender/agent.py`**: Implements the `CategoryRecommenderAgent` class, which wraps the `recommend_course_from_category.py` logic and defines the agent's API.
+
+        
+
+        
 *   **`services/`**:
     *   **Purpose**: Top-level directory for all shared service modules.
     *   **`services/pose_checker/`**:
