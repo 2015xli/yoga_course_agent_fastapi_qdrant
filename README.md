@@ -4,7 +4,6 @@ This repository contains a fully-featured, **card-driven multi-agent system** th
 
 Key technologies:
 
-* **Google Agent Dev Kit (ADK)** – each agent ships with a `card.yaml` for automatic discovery and HTTP schema negotiation.
 * **Qdrant (vector store)** – provides high-recall semantic search over poses, categories and courses. A **single local Qdrant server** is launched on-demand and shared by every process to avoid file-lock issues.
 * **Neo4j (graph DB)** – stores rich relationships between poses, challenges, anatomy, and courses.
 * **FastAPI** – powers the HTTP endpoints for the pose-checker and the combined course-finder / category-recommender agent.
@@ -98,8 +97,8 @@ The system operates through a coordinated set of components:
 
 1.  **Data Ingestion (`build_graphrag.py`)**: Populates Neo4j with yoga pose, attribute, category, challenge, and course data, and loads vectors into Qdrant for semantic search.
 2.  **Pose Suitability Checking (`services/pose_checker/server.py`)**: A FastAPI service that checks if a specific yoga pose is suitable for a user based on their contraindications and poses to avoid. It can also suggest replacement poses from the knowledge graph.
-3.  **Existing Course Recommendation (`agents/course_finder_adk`)**: The ADK agent (`find_courses` action) that searches for pre-defined yoga courses via Qdrant + Neo4j.
-4.  **Dynamic Course Composition (`agents/category_recommender_adk`)**: The ADK agent (`compose_course` action) that generates a new pose sequence when no existing course passes validation.
+3.  **Existing Course Recommendation (`agents/course_finder_adk`)**: The agent (`find_courses` action) that searches for pre-defined yoga courses via Qdrant + Neo4j.
+4.  **Dynamic Course Composition (`agents/category_recommender_adk`)**: The agent (`compose_course` action) that generates a new pose sequence when no existing course passes validation.
 5.  **Orchestration (`yoga_application_runner.py`)**: The main application runner that orchestrates the entire process. It first attempts to find and validate an existing course. If no suitable existing course is found, it falls back to composing a new course, validating each pose in the sequence for user suitability.
 
 ## Using Instructions
